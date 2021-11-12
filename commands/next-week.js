@@ -1,8 +1,8 @@
+const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const { MessageEmbed } = require('discord.js');
-const fs = require('fs');
-const readline = require('readline');
 const { google } = require('googleapis');
-const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+const readline = require('readline');
+const fs = require('fs');
 
 module.exports = {
     name: 'next-week',
@@ -10,10 +10,7 @@ module.exports = {
 
     async execute(client, message, args) {
 
-
         /* Start of Google Stuff */
-
-
 
         // If modifying these scopes, delete token.json.
         const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
