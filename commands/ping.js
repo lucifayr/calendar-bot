@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const Color = "RANDOM"
+const Color = "RANDOM";
 
 module.exports = {
     name: 'ping',

@@ -8,7 +8,8 @@ module.exports = client => {
     const guild = client.guilds.cache.get(client.config.guild_id);
     const channel = guild.channels.cache.get(client.config.channel_id);
 
-    module.exports = { guild: guild, channel: channel };
+    client.channel = channel;
+    client.guild = guild;
 
 	let scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * *', () => {
         const readline = require('readline');

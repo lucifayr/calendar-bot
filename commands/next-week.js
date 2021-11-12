@@ -2,11 +2,6 @@ const { MessageEmbed } = require('discord.js');
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
-
-const eventDates = [];
-const eventSummaries = [];
-const eventDescriptions = [];
-const eventColors = [];
 const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 module.exports = {

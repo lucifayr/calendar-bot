@@ -19,6 +19,8 @@ Client.messages_send = [];
 Client.__first_run__ = true;
 Client.end_date_saved;
 Client.start_date_saved;
+Client.guild;
+Client.channel;
 
 const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const events = fs.readdirSync('./events/').filter(file => file.endsWith('.js'));
