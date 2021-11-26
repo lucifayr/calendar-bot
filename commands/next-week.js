@@ -6,7 +6,7 @@ const fs = require('fs');
 
 module.exports = {
     name: 'next-week',
-    description: 'Give\'s you the assignments of the next week',
+    description: 'Gives you the assignments due next week',
 
     async execute(client, message, args) {
 
@@ -112,7 +112,7 @@ module.exports = {
                     });
 
                     const EventsEmbed = new MessageEmbed()
-                        .setTitle("This weeks assignments.")
+                        .setTitle("This week\'s assignments.")
 
                     let text;
 
@@ -240,7 +240,7 @@ module.exports = {
                     });
 
                     const EventsEmbed = new MessageEmbed()
-                        .setTitle("This weeks assignments.")
+                        .setTitle("This week\'s assignments.")
 
                     let text;
 
