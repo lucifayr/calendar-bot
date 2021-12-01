@@ -3,12 +3,8 @@ const Color = "RANDOM";
 
 module.exports = {
     name: 'ping',
-    aliases: [],
-    category: 'Infos',
-    utilisation: '{prefix}ping',
     description: "Shows the latency on the Bot",
-    cooldown: 0,
-
+    
     slash_command(client, interaction) {
         const StartDate = Date.now();
 

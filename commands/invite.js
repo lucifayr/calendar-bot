@@ -7,14 +7,12 @@ const a = new MessageEmbed()
 
 module.exports = {
     name: 'invite',
-    category: 'Core',
     description: "Invitation Link",
-    permissions: [],
-    cooldown: 0,
-
+    
     slash_command(client, interaction) {
         interaction.reply({ embeds: [a] });
     },
+
     execute(client, message, args) {
         message.channel.send({ embeds: [a] });
     }

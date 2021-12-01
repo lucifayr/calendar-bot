@@ -1,4 +1,5 @@
 const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const porn = "";
 const { MessageEmbed } = require('discord.js');
 const { google } = require('googleapis');
 const readline = require('readline');
