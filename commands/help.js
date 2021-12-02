@@ -41,11 +41,14 @@ module.exports = {
 
         message.channel.send({ embeds: [a] });
     },
+    
     slash_command(client, interaction) {
         let help;
+        
         if (interaction.options._hoistedOptions[0]) {
             help = interaction.options._hoistedOptions[0].value;
         }
+
         const a = lel(client, interaction, help);
 
         interaction.reply({ embeds: [a] });
