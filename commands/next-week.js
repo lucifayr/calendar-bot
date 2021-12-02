@@ -149,7 +149,8 @@ module.exports = {
                 const events = res.data.items;
                 if (events.length) {
                     events.map((event) => {
-                        eventDates.push(event.start.date);
+                        if(event.start.date != undefined) eventDates.push(event.start.date);
+                        else eventDates.push(event.start.dateTime.split('T')[0]);
                         eventSummaries.push(event.summary);
                         eventDescriptions.push(event.description);
                         eventColors.push(event.colorId);
