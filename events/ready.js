@@ -1,6 +1,44 @@
 const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const cron = require("cron");
 const fs = require('fs');
+const axios = require("axios");
+
+const TOKEN_PATH = 'token.json';
+const CREDETIALS_PATH = 'credentials.json';
+
+// should be put in its own .js file
+async function refreshAccessToken(refreshToken, clientID, clientSecret){
+
+    const response = await axios.post('https://oauth2.googleapis.com/token', {
+        refresh_token: refreshToken,
+        client_id: clientID,
+        client_secret: clientSecret,
+        grant_type: 'refresh_token'
+    })
+ 
+    const accessToken = response.data.access_token;
+    const expiryDate = response.data.expiry_date; 
+
+    let content = JSON.parse(fs.readFileSync(TOKEN_PATH));
+    content.access_token = accessToken;
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(content));
+
+    content = JSON.parse(fs.readFileSync(TOKEN_PATH));
+    content.expiry_date = expiryDate;
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(content));
+}
+
+function getNewAccessToken(){
+    fs.readFile(CREDETIALS_PATH, (err, content) => {
+        if(err) return console.log(err);
+        const {client_id, client_secret} = JSON.parse(content).installed
+        fs.readFile(TOKEN_PATH, (err, content) => {
+            if (err) return console.log(err);
+            const token = JSON.parse(content).refresh_token;
+            return refreshAccessToken(token, client_id, client_secret);            
+        })
+    })
+}
 
 module.exports = client => {
 	console.log("Client ready");
@@ -10,6 +48,7 @@ module.exports = client => {
 
     client.channel = channel;
     client.guild = guild;
+
 
 	let scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * *', () => {
         const readline = require('readline');
@@ -24,7 +63,6 @@ module.exports = client => {
         // The file token.json stores the user's access and refresh tokens, and is
         // created automatically when the authorization flow completes for the first
         // time.
-        const TOKEN_PATH = 'token.json';
 
         // Load client secrets from a local file.
         fs.readFile('../credentials.json', (err, content) => {
@@ -239,7 +277,13 @@ module.exports = client => {
                 singleEvents: true,
                 orderBy: 'startTime',
             }, (err, res) => {
-                if (err) return console.log('The API returned an error: ' + err);
+                if (err)
+                try{
+                    getNewAccessToken();
+                }
+                catch{
+                    return console.log('The API returned an error: ' + err);
+                }
                 const events = res.data.items;
                 if (events.length) {
                     events.map((event, i) => {
