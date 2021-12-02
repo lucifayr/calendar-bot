@@ -3,6 +3,44 @@ const { MessageEmbed } = require('discord.js');
 const { google } = require('googleapis');
 const readline = require('readline');
 const fs = require('fs');
+const axios = require("axios");
+
+
+const TOKEN_PATH = 'token.json';
+const CREDETIALS_PATH = 'credentials.json';
+
+async function refreshAccessToken(refreshToken, clientID, clientSecret){
+
+    const response = await axios.post('https://oauth2.googleapis.com/token', {
+        refresh_token: refreshToken,
+        client_id: clientID,
+        client_secret: clientSecret,
+        grant_type: 'refresh_token'
+    })
+
+    const accessToken = response.data.access_token;
+    const expiryDate = response.data.expiry_date;
+
+    let content = JSON.parse(fs.readFileSync(TOKEN_PATH));
+    content.access_token = accessToken;
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(content));
+
+    content = JSON.parse(fs.readFileSync(TOKEN_PATH));
+    content.expiry_date = expiryDate;
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(content));
+}
+
+function getNewAccessToken(){
+    fs.readFile(CREDETIALS_PATH, (err, content) => {
+        if(err) return console.log(err);
+        const {client_id, client_secret} = JSON.parse(content).installed
+        fs.readFile(TOKEN_PATH, (err, content) => {
+            if (err) return console.log(err);
+            const token = JSON.parse(content).refresh_token;
+            return refreshAccessToken(token, client_id, client_secret);            
+        })
+    })
+}
 
 module.exports = {
     name: 'next-week',
@@ -101,7 +139,13 @@ module.exports = {
                 singleEvents: true,
                 orderBy: 'startTime',
             }, (err, res) => {
-                if (err) return console.log('The API returned an error: ' + err);
+                if (err)
+                try{
+                    getNewAccessToken();
+                }
+                catch{
+                    return console.log('The API returned an error: ' + err);
+                }
                 const events = res.data.items;
                 if (events.length) {
                     events.map((event) => {
@@ -229,11 +273,18 @@ module.exports = {
                 singleEvents: true,
                 orderBy: 'startTime',
             }, (err, res) => {
-                if (err) return console.log('The API returned an error: ' + err);
+                if (err)
+                try{
+                    getNewAccessToken();
+                }
+                catch{
+                    return console.log('The API returned an error: ' + err);
+                }
                 const events = res.data.items;
                 if (events.length) {
                     events.map((event) => {
-                        eventDates.push(event.start.date);
+                        if(event.start.date != undefined) eventDates.push(event.start.date);
+                        else eventDates.push(event.start.dateTime.split('T')[0]);
                         eventSummaries.push(event.summary);
                         eventDescriptions.push(event.description);
                         eventColors.push(event.colorId);
