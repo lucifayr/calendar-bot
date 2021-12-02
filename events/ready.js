@@ -142,14 +142,20 @@ module.exports = client => {
                             client.eventIDList.push(event.id);
 
                             const EventsEmbed = new MessageEmbed().setTitle("⚠️ New Assignment ⚠️");
-                            let day = new Date(event.start.date).getDay();
+                            let date;
+                            let day;
                             let text;
 
                             let icon = "📚";
                             if (event.colorIds == 11) icon = "❗";
 
-                            if (event.description) text = `${event.start.date.toString()}\n\n${event.description.toString()}`;
-                            else text = `${event.start.date.toString()}`;
+                            if(event.start.date != undefined) date = event.start.date;
+                            else date = event.start.dateTime.split('T')[0];
+
+                            day = new Date(date).getDay();
+
+                            if (event.description) text = `${date.toString()}\n\n${event.description.toString()}`;
+                            else text = `${date.toString()}`;
 
                             EventsEmbed.addField(`${icon} ${weekday[day]} - ${event.summary}`, `${text}`);
 
@@ -287,7 +293,8 @@ module.exports = client => {
                 const events = res.data.items;
                 if (events.length) {
                     events.map((event, i) => {
-                        eventDates.push(event.start.date);
+                        if(event.start.date != undefined) eventDates.push(event.start.date);
+                        else eventDates.push(event.start.dateTime.split('T')[0]);
                         eventSummaries.push(event.summary);
                         eventDescriptions.push(event.description);
                         eventColors.push(event.colorId);
