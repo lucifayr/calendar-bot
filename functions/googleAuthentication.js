@@ -2,6 +2,7 @@
 
 const readline = require('readline');
 const { google } = require('googleapis');
+const axios = require("axios");
 const TOKEN_PATH = 'token.json';
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
 
@@ -48,4 +49,38 @@ const getAccessToken = (oAuth2Client, callback) => {
 	});
 }
 
-module.exports = authorize;
+const refreshAccessToken = async (refreshToken, clientID, clientSecret) => {
+
+    const response = await axios.post('https://oauth2.googleapis.com/token', {
+        refresh_token: refreshToken,
+        client_id: clientID,
+        client_secret: clientSecret,
+        grant_type: 'refresh_token'
+    })
+ 
+    const accessToken = response.data.access_token;
+    const expiryDate = response.data.expiry_date; 
+
+    let content = JSON.parse(fs.readFileSync(TOKEN_PATH));
+    content.access_token = accessToken;
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(content));
+
+    content = JSON.parse(fs.readFileSync(TOKEN_PATH));
+    content.expiry_date = expiryDate;
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(content));
+}
+
+const getNewAccessToken = () => {
+    fs.readFile(CREDETIALS_PATH, (err, content) => {
+        if(err) return console.log(err);
+        const {client_id, client_secret} = JSON.parse(content).installed
+        fs.readFile(TOKEN_PATH, (err, content) => {
+            if (err) return console.log(err);
+            const token = JSON.parse(content).refresh_token;
+            return refreshAccessToken(token, client_id, client_secret);            
+        })
+    })
+}
+
+module.exports.authorize = authorize;
+module.exports.getNewAccessToken = getNewAccessToken;

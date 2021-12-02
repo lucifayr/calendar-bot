@@ -1,8 +1,10 @@
 const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const authorize = require("../functions/googleAuthentication.js");
+const getNewAccessToken = require("../functions/googleAuthentication.js").getNewAccessToken;
+const authorize = require("../functions/googleAuthentication.js").authorize;
 const { google } = require('googleapis');
 const cron = require("cron");
 const fs = require('fs');
+
 
 module.exports = client => {
 	console.log("Client ready");
@@ -32,7 +34,16 @@ module.exports = client => {
                 singleEvents: true,
                 orderBy: 'startTime',
             }, (err, res) => {
-                if (err) return console.log('The API returned an error: ' + err);
+                
+                if (err) {
+                    try{
+                        getNewAccessToken();
+                    }
+                    catch{
+                        return console.log('The API returned an error: ' + err);
+                    }
+                }
+
                 const events = res.data.items;
                 if (events.length) {
                     events.map((event, i) => {
@@ -110,7 +121,16 @@ module.exports = client => {
                 singleEvents: true,
                 orderBy: 'startTime',
             }, (err, res) => {
-                if (err) return console.log('The API returned an error: ' + err);
+                
+                if (err) {
+                    try{
+                        getNewAccessToken();
+                    }
+                    catch{
+                        return console.log('The API returned an error: ' + err);
+                    }
+                }
+
                 const events = res.data.items;
                 if (events.length) {
                     events.map((event, i) => {
