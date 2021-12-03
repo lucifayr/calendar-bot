@@ -25,6 +25,7 @@ module.exports = {
             interaction.editReply({ embeds: [embed] });
         })
     },
+    
     execute(client, message) {
         let StartDate = Date.now();
         const Wait = new MessageEmbed()

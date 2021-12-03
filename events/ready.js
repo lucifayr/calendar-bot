@@ -1,5 +1,6 @@
 const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const getNewAccessToken = require("../functions/googleAuthentication.js").getNewAccessToken;
+const weekEvents = require("../functions/googleAuthentication.js").weekEvents;
 const authorize = require("../functions/googleAuthentication.js").authorize;
 const { google } = require('googleapis');
 const cron = require("cron");
@@ -85,94 +86,22 @@ module.exports = client => {
             }
         }
 
-        const eventDates = [];
-        const eventSummaries = [];
-        const eventDescriptions = [];
-        const eventColors = [];
-
         /* Start of Google Stuff */
 
         // Load client secrets from a local file.
         fs.readFile('../credentials.json', (err, content) => {
             if (err) return console.log('Error loading client secret file:', err);
             // Authorize a client with credentials, then call the Google Calendar API.
-            authorize(JSON.parse(content), weekEvents);
+            authorize(JSON.parse(content), weekEvents, "", "message", channel);
         });
-        /* End of Google Stuff */
-
-
-        // Lists the events in the next week
-
-        function weekEvents(auth) {
-            const calendar = google.calendar({ version: 'v3', auth });
-            client.eventIDList = [];
-
-            let startDate = new Date();
-            let endDate = new Date(startDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-
-            client.start_date_saved = startDate;
-            client.end_date_saved = endDate;
-            scheduleCheck.start();
-
-            calendar.events.list({
-                calendarId: '949qtctku1b132hle31l3crs6s@group.calendar.google.com',
-                timeMin: startDate,
-                timeMax: endDate,
-                singleEvents: true,
-                orderBy: 'startTime',
-            }, (err, res) => {
-                
-                if (err) {
-                    try{
-                        getNewAccessToken();
-                    }
-                    catch{
-                        return console.log('The API returned an error: ' + err);
-                    }
-                }
-
-                const events = res.data.items;
-                if (events.length) {
-                    events.map((event, i) => {
-                        eventDates.push(event.start.date);
-                        eventSummaries.push(event.summary);
-                        eventDescriptions.push(event.description);
-                        eventColors.push(event.colorId);
-                        client.eventIDList.push(event.id);
-                    });
-
-                    const EventsEmbed = new MessageEmbed()
-                        .setTitle("This weeks assignments.")
-
-                    let text;
-
-                    for (let i = 0; i < eventDates.length; i++) {
-                        if (eventDescriptions[i]) text = `${eventDates[i].toString()}\n\n${eventDescriptions[i].toString()}`;
-                        else text = `${eventDates[i].toString()}`;
-
-                        let icon = "📚";
-                        if (eventColors[i] == 11) icon = "❗";
-
-                        let day = new Date(eventDates[i]).getDay();
-                        EventsEmbed.addField(`${icon} ${weekday[day]} - ${eventSummaries[i]}`, `${text}`);
-                    };
-
-                    channel.send({ embeds: [EventsEmbed] }).then(msg => {
-                        client.messages_send.push(msg);
-                    });
-                } else {
-                    console.log('No upcoming events found.');
-                }
-            })
-        }
     });
 
     scheduleMessage.start();
 
     fs.watch(client.config.file_location, async(event, filename) => {
-        if (filename === Client.config.file_name) {
+        if (filename === client.config.file_name) {
             if (event === 'rename') {
-                fs.writeFile(`${Client.config.file_location}${Client.config.file_name}`, '', function callbackFunction() {});
+                fs.writeFile(`${client.config.file_location}${client.config.file_name}`, '', () => {});
             } else if (event === 'change') {
                 const content = fs.readFileSync(`${Client.config.file_location}${Client.config.file_name}`);
 
