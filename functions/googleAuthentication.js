@@ -20,13 +20,6 @@ const authorize = (credentials, callback, interaction, type, channel) => {
 	});
 }
 
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {getEventsCallback} callback The callback for the authorized client.
- */
-
 const getAccessToken = (oAuth2Client, callback, interaction, type, channel) => {
 	const authUrl = oAuth2Client.generateAuthUrl({
 		access_type: 'offline',
@@ -42,7 +35,6 @@ const getAccessToken = (oAuth2Client, callback, interaction, type, channel) => {
 		oAuth2Client.getToken(code, (err, token) => {
 			if (err) return console.error('Error retrieving access token', err);
 			oAuth2Client.setCredentials(token);
-			// Store the token to disk for later program executions
 			fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
 				if (err) return console.error(err);
 				console.log('Token stored to', TOKEN_PATH);
@@ -124,7 +116,7 @@ const weekEvents = (auth, interaction, type, channel) => {
 			});
 
 			const EventsEmbed = new MessageEmbed()
-				.setTitle("This week\'s assignments.")
+				.setTitle("This week's assignments.")
 
 			let text;
 
