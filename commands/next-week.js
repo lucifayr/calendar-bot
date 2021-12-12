@@ -1,5 +1,5 @@
 const weekEvents = require("../functions/googleAuthentication.js").weekEvents;
-const authorize = require("../functions/googleAuthentication.js");
+const authorize = require("../functions/googleAuthentication.js").authorize;
 const fs = require('fs');
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
             authorize(JSON.parse(content), weekEvents, message, "message", message.channel);
         });
     },
-    
+
     async slash_command(client, interaction) {
         await interaction.deferReply();
 

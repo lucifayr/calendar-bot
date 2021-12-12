@@ -8,7 +8,7 @@ const fs = require('fs');
 
 
 module.exports = client => {
-	console.log("Client ready");
+    console.log("Client ready");
 
     const guild = client.guilds.cache.get(client.config.guild_id);
     const channel = guild.channels.cache.get(client.config.channel_id);
@@ -16,15 +16,13 @@ module.exports = client => {
     client.channel = channel;
     client.guild = guild;
 
-	let scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * *', () => {
+    let scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * *', () => {
 
         fs.readFile('../credentials.json', (err, content) => {
             if (err) return console.log('Error loading client secret file:', err);
             // Authorize a client with credentials, then call the Google Calendar API.
             authorize(JSON.parse(content), checkEvents);
         });
-
-        /* End of Google Stuff */
 
         function checkEvents(auth) {
             const calendar = google.calendar({ version: 'v3', auth });
@@ -35,12 +33,11 @@ module.exports = client => {
                 singleEvents: true,
                 orderBy: 'startTime',
             }, (err, res) => {
-                
+
                 if (err) {
-                    try{
+                    try {
                         getNewAccessToken();
-                    }
-                    catch{
+                    } catch {
                         return console.log('The API returned an error: ' + err);
                     }
                 }
@@ -52,14 +49,18 @@ module.exports = client => {
                             client.eventIDList.push(event.id);
 
                             const EventsEmbed = new MessageEmbed().setTitle("⚠️ New Assignment ⚠️");
-                            let day = new Date(event.start.date).getDay();
+
+                            let date = event.start.date;
+                            if (date == undefined) date = event.start.dateTime.split('T');
+
+                            let day = new Date(date).getDay();
                             let text;
 
                             let icon = "📚";
                             if (event.colorIds == 11) icon = "❗";
 
-                            if (event.description) text = `${event.start.date.toString()}\n\n${event.description.toString()}`;
-                            else text = `${event.start.date.toString()}`;
+                            if (event.description) text = `${date.toString()}\n\n${event.description.toString()}`;
+                            else text = `${date.toString()}`;
 
                             EventsEmbed.addField(`${icon} ${weekday[day]} - ${event.summary}`, `${text}`);
 
@@ -86,7 +87,6 @@ module.exports = client => {
             }
         }
 
-        /* Start of Google Stuff */
 
         // Load client secrets from a local file.
         fs.readFile('../credentials.json', (err, content) => {
