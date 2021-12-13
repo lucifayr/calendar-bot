@@ -19,7 +19,7 @@ const lel = (client, inter_mes, args) => {
         });
     }
 
-    return helpEmbed;
+    return { embeds: [helpEmbed]};
 }
 
 module.exports = {
@@ -37,9 +37,7 @@ module.exports = {
     ],
 
     execute(client, message, args) {
-        const a = lel(client, message, args.join(" "));
-
-        message.channel.send({ embeds: [a] });
+        message.channel.send(lel(client, message, args.join(" ")));
     },
     
     slash_command(client, interaction) {
@@ -49,8 +47,6 @@ module.exports = {
             help = interaction.options._hoistedOptions[0].value;
         }
 
-        const a = lel(client, interaction, help);
-
-        interaction.reply({ embeds: [a] });
+        interaction.reply(lel(client, interaction, help));
     }
 }
