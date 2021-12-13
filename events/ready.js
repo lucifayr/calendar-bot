@@ -4,8 +4,10 @@ const weekEvents = require("../functions/googleAuthentication.js").weekEvents;
 const authorize = require("../functions/googleAuthentication.js").authorize;
 const { google } = require('googleapis');
 const cron = require("cron");
+const { MessageEmbed } = require('discord.js');
 const fs = require('fs');
 
+const CREDENTIALS_PATH = 'credentials.json';
 
 module.exports = client => {
     console.log("Client ready");
@@ -16,9 +18,9 @@ module.exports = client => {
     client.channel = channel;
     client.guild = guild;
 
-    let scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * *', () => {
+    let scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * * ', () => {
 
-        fs.readFile('../credentials.json', (err, content) => {
+        fs.readFile(CREDENTIALS_PATH, (err, content) => {
             if (err) return console.log('Error loading client secret file:', err);
             // Authorize a client with credentials, then call the Google Calendar API.
             authorize(JSON.parse(content), checkEvents);
@@ -89,13 +91,14 @@ module.exports = client => {
 
 
         // Load client secrets from a local file.
-        fs.readFile('../credentials.json', (err, content) => {
+        fs.readFile(CREDENTIALS_PATH, (err, content) => {
             if (err) return console.log('Error loading client secret file:', err);
             // Authorize a client with credentials, then call the Google Calendar API.
             authorize(JSON.parse(content), weekEvents, "", "message", channel);
         });
     });
 
+    scheduleCheck.start();
     scheduleMessage.start();
 
     fs.watch(client.config.file_location, async(event, filename) => {
