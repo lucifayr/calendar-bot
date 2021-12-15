@@ -6,7 +6,7 @@ const { MessageEmbed } = require('discord.js');
 const { google } = require('googleapis');
 const readline = require('readline');
 const TOKEN_PATH = 'token.json';
-const CREDENTIALS_PATH = 'credentials.js';
+const CREDENTIALS_PATH = 'credentials.json';
 const axios = require("axios");
 const fs = require('fs');
 
