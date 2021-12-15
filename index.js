@@ -17,7 +17,7 @@ Client.end_date_saved;
 Client.start_date_saved;
 Client.guild;
 Client.channel;
-Client.listeners = false;
+Client.listeners_active = false;
 
 const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const events = fs.readdirSync('./events/').filter(file => file.endsWith('.js'));

@@ -7,7 +7,7 @@ const cron = require("cron");
 const fs = require('fs');
 
 
-module.exports = client => {
+module.exports = (client) => {
     console.log("Client ready");
 
     const guild = client.guilds.cache.get(client.config.guild_id);
@@ -16,7 +16,7 @@ module.exports = client => {
     client.channel = channel;
     client.guild = guild;
 
-    let scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * *', () => {
+    const scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * *', () => {
 
         fs.readFile('../credentials.json', (err, content) => {
             if (err) return console.log('Error loading client secret file:', err);
@@ -76,9 +76,10 @@ module.exports = client => {
     })
 
 
-    let scheduleMessage = new cron.CronJob('00 00 16 * * 5', () => {
+    const scheduleMessage = new cron.CronJob('00 00 16 * * 5', () => {
         if (client.__first_run__) {
             client.__first_run__ = false;
+            scheduleCheck.start();
         } else {
             for (let i = 0; client.messages_send.length > 0; i++) {
                 i = 0;
@@ -98,6 +99,7 @@ module.exports = client => {
 
     scheduleMessage.start();
 
+    /*
     fs.watch(client.config.file_location, async(event, filename) => {
         if (filename === client.config.file_name) {
             if (event === 'rename') {
@@ -111,4 +113,5 @@ module.exports = client => {
             }
         }
     });
+    */
 }
