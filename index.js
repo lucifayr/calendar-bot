@@ -8,10 +8,6 @@ const Client = new Discord.Client({
     ]
 });
 
-function findId(currentId, idToFind) {
-    return currentId == idToFind;
-}
-
 Client.config = require("./config.js");
 Client.commands = new Discord.Collection();
 Client.eventIDList = [];
@@ -21,6 +17,7 @@ Client.end_date_saved;
 Client.start_date_saved;
 Client.guild;
 Client.channel;
+Client.listeners = false;
 
 const commands = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const events = fs.readdirSync('./events/').filter(file => file.endsWith('.js'));
