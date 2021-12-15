@@ -18,7 +18,7 @@ module.exports = client => {
     client.channel = channel;
     client.guild = guild;
 
-    let scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * * ', () => {
+    const scheduleCheck = new cron.CronJob('00 59 5,11,17,23 * * *', () => {
 
         fs.readFile(CREDENTIALS_PATH, (err, content) => {
             if (err) return console.log('Error loading client secret file:', err);
@@ -78,7 +78,7 @@ module.exports = client => {
     })
 
 
-    let scheduleMessage = new cron.CronJob('00 00 16 * * 5', () => {
+    const scheduleMessage = new cron.CronJob('00 00 16 * * 5', () => {
         if (client.__first_run__) {
             client.__first_run__ = false;
         } else {
@@ -96,9 +96,10 @@ module.exports = client => {
             // Authorize a client with credentials, then call the Google Calendar API.
             authorize(JSON.parse(content), weekEvents, "", "message", channel);
         });
+
+        scheduleCheck.start();
     });
 
-    scheduleCheck.start();
     scheduleMessage.start();
 
     fs.watch(client.config.file_location, async(event, filename) => {
