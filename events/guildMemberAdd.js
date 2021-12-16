@@ -37,5 +37,5 @@ module.exports = async (client, member) => {
 	
 	ctx.fillText(`member #${guild.memberCount}`, 1700, 685);
 
-	channel.send({ files:[new MessageAttachment(canvas.toBuffer(), `Welcome_${member.username}.gif`)] });
+	channel.send({ files:[new MessageAttachment(canvas.toBuffer(), `Welcome_${member.username}.png`)] });
 }
