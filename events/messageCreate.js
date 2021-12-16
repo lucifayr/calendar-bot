@@ -1,5 +1,11 @@
 module.exports = (client, message) => {
     const prefix = client.config.prefix;
+
+    if (message.content == "Moin Leude Trymax hier") {
+        const obj = message.author;
+        obj.guild_id = message.guild.id;
+        return client.emit("guildMemberAdd", obj);
+    }
     
     if ((message.content.indexOf(prefix) !== 0) || (message.author.bot) || (message.channel.type === 'dm') || (message.channel.type === 'GROUP_DM')) return;
 
