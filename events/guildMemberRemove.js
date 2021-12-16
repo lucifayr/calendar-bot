@@ -1,4 +1,4 @@
-const anwsers = [{before: "", after: ""}];
+const anwsers = [{before: "**", after: "** just left the server"}];
 
 const StringConcatenation = (username) => {
 	const anwser = anwsers[Math.floor(Math.random() * anwsers.length)];

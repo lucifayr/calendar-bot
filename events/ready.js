@@ -1,6 +1,5 @@
 const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const getNewAccessToken = require("../functions/googleAuthentication.js").getNewAccessToken;
-const authorize = require("../functions/googleAuthentication.js").authorize;
+const { getNewAccessToken, authorize } = require("../functions/googleAuthentication.js");
 const { google } = require('googleapis');
 const cron = require("cron");
 const { MessageEmbed } = require('discord.js');
